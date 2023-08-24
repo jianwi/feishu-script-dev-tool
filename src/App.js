@@ -1,7 +1,7 @@
 import './App.css';
 import {bitable} from "@base-open/web-api";
 import {useEffect, useState} from "react";
-import {message, Table} from "antd";
+import {message, Table, Tooltip, Button} from "antd";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 function App() {
@@ -39,6 +39,14 @@ function App() {
         })
     }
 
+    const nameMap = {
+        baseId: "Base ID(appToken)",
+        fieldId: "Field(列) ID",
+        tableId: "Table(数据表) ID",
+        recordId: "Record(行) ID",
+        viewId: "View(视图) ID"
+    }
+
     return (
         <div>
             <Table
@@ -46,7 +54,7 @@ function App() {
                 pagination={false}
                 dataSource={Reflect.ownKeys(baseInfo).map(item => {
                     return {
-                        key: item,
+                        key: nameMap[item],
                         value: baseInfo[item]
                     }
                 })} columns={[
@@ -54,19 +62,24 @@ function App() {
                     title: 'Key',
                     dataIndex: 'key',
                     key: 'key',
+                    render: (text) => <div style={{
+                        fontSize: "8px",
+                        width: "120px",
+                        fontWeight: "bold"
+                    }}>{text}</div>
                 },
                 {
                     title: 'Value',
                     dataIndex: 'value',
                     key: 'value',
-                    render: (text) => (  text? <CopyToClipboard
+                    render: (text) => (text ? <Tooltip title={'点击复制'} arrowContent={true}><CopyToClipboard
                         onCopy={() => {
                             console.log("复制成功")
-                            message.success("复制成功: "+text)
+                            message.success("复制成功")
                         }}
                         text={text}>
-                        <span style={{ cursor: 'pointer' }}>{text}</span>
-                    </CopyToClipboard>:'选中单元格后显示')
+                        <Button placeholder={'点击复制'} type={'link'} style={{cursor: 'pointer'}}>{text}</Button>
+                    </CopyToClipboard></Tooltip> : '选中单元格后显示')
                 }
             ]}/>
 
